@@ -91,7 +91,10 @@ func NewResolver(u *common.DNSUpstream) Resolver {
 }
 
 func (r *BaseResolver) CreateBaseConn() (net.Conn, error) {
-	dialer := net.Dialer{Timeout: r.getDialTimeout()}
+	dialer := net.Dialer{
+		Timeout:  r.getDialTimeout(),
+		Resolver: r.dnsUpstream.BootstrapResolver,
+	}
 	dialerFunc := dialer.Dial
 	if r.dnsUpstream.SOCKS5Address != "" {
 		socksAddress, err := ExtractFullUrl(r.dnsUpstream.SOCKS5Address, "socks5")

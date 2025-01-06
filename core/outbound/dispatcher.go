@@ -1,7 +1,11 @@
 package outbound
 
 import (
+	"context"
+	"math/rand"
 	"net"
+	"os"
+	"time"
 
 	"github.com/miekg/dns"
 	"github.com/shawn1m/overture/core/outbound/clients/resolver"
@@ -17,6 +21,7 @@ import (
 type Dispatcher struct {
 	PrimaryDNS     []*common.DNSUpstream
 	AlternativeDNS []*common.DNSUpstream
+	BootstrapDNS   []string
 	OnlyPrimaryDNS bool
 
 	WhenPrimaryDNSAnswerNoneUse string
@@ -35,19 +40,47 @@ type Dispatcher struct {
 
 	primaryResolvers     []resolver.Resolver
 	alternativeResolvers []resolver.Resolver
+	bootstrapResolver    *net.Resolver
 }
 
-func createResolver(ul []*common.DNSUpstream) (resolvers []resolver.Resolver) {
+func createResolver(br *net.Resolver, ul []*common.DNSUpstream) (resolvers []resolver.Resolver) {
 	resolvers = make([]resolver.Resolver, len(ul))
 	for i, u := range ul {
+		u.BootstrapResolver = br
 		resolvers[i] = resolver.NewResolver(u)
 	}
 	return resolvers
 }
 
+func createBootstrapResolver(providers []string) *net.Resolver {
+	if len(providers) == 0 {
+		return nil
+	}
+	return &net.Resolver{
+		PreferGo: true,
+		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+			dialer := &net.Dialer{
+				Timeout: time.Second * 3,
+			}
+			serverAddr := providers[rand.Intn(len(providers))]
+			if net.ParseIP(serverAddr) != nil {
+				return dialer.DialContext(ctx, network, net.JoinHostPort(serverAddr, "53"))
+			} else if host, port, err := net.SplitHostPort(serverAddr); err == nil {
+				return dialer.DialContext(ctx, network, net.JoinHostPort(host, port))
+			} else {
+				return nil, os.ErrInvalid
+			}
+		},
+	}
+}
+
 func (d *Dispatcher) Init() {
-	d.primaryResolvers = createResolver(d.PrimaryDNS)
-	d.alternativeResolvers = createResolver(d.AlternativeDNS)
+	var bootstrapResolver *net.Resolver
+	if len(d.BootstrapDNS) > 0 {
+		bootstrapResolver = createBootstrapResolver(d.BootstrapDNS)
+	}
+	d.primaryResolvers = createResolver(bootstrapResolver, d.PrimaryDNS)
+	d.alternativeResolvers = createResolver(bootstrapResolver, d.AlternativeDNS)
 }
 
 func (d *Dispatcher) Exchange(query *dns.Msg, inboundIP string) *dns.Msg {

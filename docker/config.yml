@@ -17,6 +17,10 @@ alternativeDNS:
     address: https://cloudflare-dns.com/dns-query
     protocol: https
 
+bootstrapDNS:
+  - 119.29.29.29
+  - 223.5.5.5
+
 ipNetworkFile:
   primary: ./ip/domestic.txt
   alternative: ./ip/foreign.txt

@@ -37,6 +37,7 @@ type Config struct {
 	DohEnabled                  bool                  `yaml:"dohEnabled" json:"dohEnabled"`
 	PrimaryDNS                  []*common.DNSUpstream `yaml:"primaryDNS" json:"primaryDNS"`
 	AlternativeDNS              []*common.DNSUpstream `yaml:"alternativeDNS" json:"alternativeDNS"`
+	BootstrapDNS                []string              `yaml:"bootstrapDNS" json:"bootstrapDNS"`
 	OnlyPrimaryDNS              bool                  `yaml:"onlyPrimaryDNS" json:"onlyPrimaryDNS"`
 	IPv6UseAlternativeDNS       bool                  `yaml:"ipv6UseAlternativeDNS" json:"ipv6UseAlternativeDNS"`
 	AlternativeDNSConcurrent    bool                  `yaml:"alternativeDNSConcurrent" json:"alternativeDNSConcurrent"`

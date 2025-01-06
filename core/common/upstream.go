@@ -1,5 +1,9 @@
 package common
 
+import (
+	"net"
+)
+
 type DNSUpstream struct {
 	Name             string                `yaml:"name" json:"name"`
 	Address          string                `yaml:"address" json:"address"`
@@ -13,6 +17,8 @@ type DNSUpstream struct {
 		MaxCapacity     int  `yaml:"maxCapacity" json:"maxCapacity"`
 		IdleTimeout     int  `yaml:"idleTimeout" json:"idleTimeout"`
 	} `yaml:"tcpPoolConfig" json:"tcpPoolConfig"`
+
+	BootstrapResolver *net.Resolver `yaml:"-" json:"-"`
 }
 
 func (u *DNSUpstream) Initialize() {

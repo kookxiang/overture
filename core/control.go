@@ -34,6 +34,7 @@ func Start() {
 	dispatcher := outbound.Dispatcher{
 		PrimaryDNS:                  conf.PrimaryDNS,
 		AlternativeDNS:              conf.AlternativeDNS,
+		BootstrapDNS:                conf.BootstrapDNS,
 		OnlyPrimaryDNS:              conf.OnlyPrimaryDNS,
 		WhenPrimaryDNSAnswerNoneUse: conf.WhenPrimaryDNSAnswerNoneUse,
 		IPNetworkPrimarySet:         conf.IPNetworkPrimarySet,
