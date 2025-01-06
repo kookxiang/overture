@@ -1,0 +1,49 @@
+bindAddress: :53
+minimumTTL: 30
+
+primaryDNS:
+  - name: 114DNS
+    address: 114.114.114.114:53
+    protocol: udp
+    timeout: 3
+    ednsClientSubnet:
+      policy: auto
+  - name: DNSPod
+    address: 119.29.29.29:53
+    protocol: udp
+    timeout: 3
+    ednsClientSubnet:
+      policy: auto
+  - name: AliDNS
+    address: 223.5.5.5:53
+    protocol: udp
+    timeout: 3
+    ednsClientSubnet:
+      policy: auto
+
+alternativeDNS:
+  - name: AdGuard
+    address: https://dns.adguard-dns.com/dns-query
+    protocol: https
+    timeout: 5
+    ednsClientSubnet:
+      policy: auto
+  - name: CloudFlare
+    address: https://cloudflare-dns.com/dns-query
+    protocol: https
+    timeout: 5
+    ednsClientSubnet:
+      policy: auto
+
+ipNetworkFile:
+  primary: ./ip/domestic.txt
+  alternative: ./ip/foreign.txt
+
+domainFile:
+  primary: ./domain/domestic.txt
+  alternative: ./domain/foreign.txt
+  matcher: suffix-tree
+
+hostsFile:
+  hostsFile: ./hosts
+  finder: full-map
