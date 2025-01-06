@@ -21,7 +21,7 @@ FROM alpine
 
 COPY --from=builder /bin/overture /bin/overture
 COPY --from=builder /config /config
-COPY docker/config.yml /config/config.yml
+COPY config.sample.yml /config/config.yml
 
 WORKDIR /config
 
