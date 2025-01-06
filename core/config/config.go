@@ -85,6 +85,14 @@ func NewConfig(configFile string) *Config {
 	config.IPNetworkPrimarySet = getIPNetworkSet(config.IPNetworkFile.Primary)
 	config.IPNetworkAlternativeSet = getIPNetworkSet(config.IPNetworkFile.Alternative)
 
+	for _, upstream := range config.PrimaryDNS {
+		upstream.Initialize()
+	}
+
+	for _, upstream := range config.AlternativeDNS {
+		upstream.Initialize()
+	}
+
 	if config.MinimumTTL > 0 {
 		log.Infof("Minimum TTL has been set to %d", config.MinimumTTL)
 	} else {

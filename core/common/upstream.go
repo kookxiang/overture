@@ -14,3 +14,21 @@ type DNSUpstream struct {
 		IdleTimeout     int  `yaml:"idleTimeout" json:"idleTimeout"`
 	} `yaml:"tcpPoolConfig" json:"tcpPoolConfig"`
 }
+
+func (u *DNSUpstream) Initialize() {
+	if u.Protocol == "" {
+		u.Protocol = "udp"
+	}
+
+	if u.Timeout == 0 {
+		u.Timeout = 5
+	}
+
+	if u.EDNSClientSubnet == nil {
+		u.EDNSClientSubnet = &EDNSClientSubnetType{
+			Policy:     "auto",
+			ExternalIP: "",
+			NoCookie:   false,
+		}
+	}
+}
